@@ -31,14 +31,21 @@ function App() {
   }
 
   function handleOnPageNumberClick(index) {
-    setCurrentPage(index)
-    if(currentPage === stopLoop - 2) {
-      setStopLoop(stopLoop+1)
-      setStartLoop(startLoop+1)
+    setCurrentPage(index);
+    if (index >= stopLoop - 1) {
+      setStopLoop(stopLoop + 1);
+      setStartLoop(startLoop + 1);
+    } else if (index <= startLoop && startLoop > 0) {
+      setStopLoop(stopLoop - 1);
+      setStartLoop(startLoop - 1);
     }
   }
 
   function handlePrevious() {
+    if(currentPage === startLoop + 1 && startLoop !== 0) {
+      setStopLoop(stopLoop-1)
+      setStartLoop(startLoop-1)
+    }
     setCurrentPage(currentPage - 1)
   }
 
@@ -61,19 +68,26 @@ function App() {
           Prev
         </button>
         {
+          (currentPage === startLoop + 1 || currentPage === startLoop) && startLoop > 0 && (
+            <span className='min-w-12 h-12 flex justify-center items-center bg-slate-200'>
+              ...
+            </span>
+          )
+        }
+        {
           Array
           .from({length: Math.ceil(numberOfPages)}, (_, index)=> index)
           .slice(startLoop, stopLoop)
           .map((index) => {
             return(
-              <span onClick={() => handleOnPageNumberClick(index)} className={`hover:bg-orange-200 transition-all duration-200 w-12 h-12 flex justify-center items-center cursor-pointer ${currentPage === index ? 'bg-orange-400' : 'bg-slate-200'}`}>
+              <span key={index} onClick={() => handleOnPageNumberClick(index)} className={`hover:bg-orange-200 transition-all duration-200 w-12 h-12 flex justify-center items-center cursor-pointer ${currentPage === index ? 'bg-orange-400' : 'bg-slate-200'}`}>
                   {index + 1}
               </span>
             )
           })
         }
         {
-          currentPage !== numberOfPages - 1 && (
+          currentPage < numberOfPages - 1 && (
             <span className='min-w-12 h-12 flex justify-center items-center bg-slate-200'>
               ...
             </span>
